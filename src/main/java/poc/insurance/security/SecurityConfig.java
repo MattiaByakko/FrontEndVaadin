@@ -6,17 +6,12 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.Customizer;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
 
     @Bean
     @Order(1)
@@ -40,24 +35,24 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/",
-                                "/login",
-                                "/logout",
-                                "/public/**",
-                                "/VAADIN/**",
-                                "/frontend/**",
-                                "/images/**",
-                                "/icons/**",
-                                "/manifest.webmanifest",
-                                "/sw.js",
-                                "/offline.html",
+                                "/", "/login", "/logout", "/logout-success",
+                                "/public/**", "/VAADIN/**", "/frontend/**", "/images/**",
+                                "/icons/**", "/manifest.webmanifest", "/sw.js", "/offline.html",
                                 "/favicon.ico"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(Customizer.withDefaults())
-                .logout(logout -> logout.logoutSuccessUrl("/"))
-                .csrf(csrf -> csrf.disable()); // opzionale, ma utile per Vaadin
+                        .logout(logout -> logout
+                                .logoutSuccessUrl("/logout-success")
+                                .invalidateHttpSession(true)
+                                .clearAuthentication(true)
+                                .deleteCookies("JSESSIONID")
+                .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
+                )
+                .csrf(csrf -> csrf.disable()); // utile per evitare problemi con Vaadin
 
         return http.build();
     }
