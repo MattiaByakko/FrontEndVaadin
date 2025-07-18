@@ -54,7 +54,7 @@ public class MainView extends Div {
                     String userId = keycloakAdminClient.getUserIdByUsername(username);
                     keycloakAdminClient.terminateUserSessions(userId);
                     // Invalidate Spring Security context and HTTP session
-                    HttpServletRequest request = ((VaadinServletRequest) VaadinSession.getCurrent().getRequest()).getHttpServletRequest();
+                    HttpServletRequest request = ((VaadinServletRequest) VaadinSession.getCurrent().getRequestHandlers()).getHttpServletRequest();
                     HttpSession httpSession = request.getSession(false);
                     if (httpSession != null) {
                         httpSession.invalidate();  // invalidates both Spring Security session and HTTP session
